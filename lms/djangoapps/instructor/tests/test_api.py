@@ -642,6 +642,28 @@ class TestInstructorAPIBulkAccountCreationAndEnrollment(SharedModuleStoreTestCas
             last_name='Student'
         )
 
+    def test_account_creation_and_enrollment_with_csv_without_login(self):
+        """
+        Happy path test to create a single new user
+        """
+        self.client.logout()
+        uploaded_file = SimpleUploadedFile("temp.jpg", io.BytesIO(b"some initial binary data: \x00\x01").read())
+        response = self.client.post(self.url, {'students_list': uploaded_file})
+        assert response.status_code == 200
+
+    @patch('lms.djangoapps.instructor.views.api.log.info')
+    @ddt.data(
+        b"test_student@example.com,test_student_1,tester1,USA",  # Typical use case.
+    )
+    def test_account_creation_and_enrollment_with_csv_without_permission(self, csv_content, info_log):
+        """
+        Happy path test to create a single new user
+        """
+        self.client.logout()
+        uploaded_file = SimpleUploadedFile("temp.csv", csv_content)
+        response = self.client.post(self.url, {'students_list': uploaded_file, 'email-students': True})
+        assert response.status_code == 200
+
     @patch('lms.djangoapps.instructor.views.api.log.info')
     @ddt.data(
         b"test_student@example.com,test_student_1,tester1,USA",  # Typical use case.
