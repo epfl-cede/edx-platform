@@ -223,7 +223,6 @@ def require_course_permission(permission):
         def wrapped(*args, **kwargs):
             request = args[0]
             course = get_course_by_id(CourseKey.from_string(kwargs['course_id']))
-
             if (request.user.
                 has_perm(permission, course)):
                 return func(*args, **kwargs)
@@ -314,6 +313,7 @@ class RegisterAndEnrollStudents(APIView):
     """
     authentication_classes = (JwtAuthentication, BearerAuthentication, SessionAuthentication)
     permission_classes = (IsAuthenticated,)
+
     @method_decorator(ensure_csrf_cookie)
     @verify_course_permission(permissions.CAN_ENROLL)
     def post(self, request, course_id):  # pylint: disable=too-many-statements
