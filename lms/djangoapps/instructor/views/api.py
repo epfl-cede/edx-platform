@@ -223,8 +223,8 @@ def require_course_permission(permission):
         def wrapped(*args, **kwargs):
             request = args[0]
             course = get_course_by_id(CourseKey.from_string(kwargs['course_id']))
-            if (request.user.
-                has_perm(permission, course)):
+
+            if request.user.has_perm(permission, course):
                 return func(*args, **kwargs)
             else:
                 return HttpResponseForbidden()
