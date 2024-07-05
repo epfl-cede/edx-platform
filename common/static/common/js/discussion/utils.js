@@ -164,6 +164,7 @@
         };
 
         DiscussionUtil.hideLoadingIndicator = function() {
+            $(document).trigger( 'edxForumDisplayUpdated', [ 'DiscussionUtil', 'hideLoadingIndicator' ] );
             return this.$_loading.remove();
         };
 

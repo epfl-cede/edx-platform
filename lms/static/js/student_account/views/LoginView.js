@@ -44,9 +44,11 @@
                 this.hasSecondaryProviders = (
                     data.thirdPartyAuth.secondaryProviders && data.thirdPartyAuth.secondaryProviders.length
                 );
+                this.secondaryProviders = data.thirdPartyAuth.secondaryProviders || [];
                 this.currentProvider = data.thirdPartyAuth.currentProvider || '';
                 this.syncLearnerProfileData = data.thirdPartyAuth.syncLearnerProfileData || false;
                 this.errorMessage = data.thirdPartyAuth.errorMessage || '';
+                this.fixAbstruseThirdPartyAuthError = data.thirdPartyAuth.fixAbstruseThirdPartyAuthError || false;
                 this.platformName = data.platformName;
                 this.resetModel = data.resetModel;
                 this.accountRecoveryModel = data.accountRecoveryModel;
@@ -85,6 +87,7 @@
                                 currentProvider: this.currentProvider,
                                 syncLearnerProfileData: this.syncLearnerProfileData,
                                 providers: this.providers,
+                                secondaryProviders: this.secondaryProviders,
                                 hasSecondaryProviders: this.hasSecondaryProviders,
                                 platformName: this.platformName,
                                 createAccountOption: this.createAccountOption,
@@ -285,6 +288,13 @@
                     jsHook: this.authWarningJsHook,
                     message: message
                 });
+
+                if(this.fixAbstruseThirdPartyAuthError) {
+                    this.element.hide( $(this.el).find( '.' + this.authWarningJsHook ) );
+                    this.element.hide( $(this.el).find('.signing-in-header') );
+                    this.element.hide( $(this.el).find('.login-form') );
+                    this.element.show( $(this.el).find('.custom-auth-warning') );
+                }
             },
 
             clearPasswordResetSuccess: function() {

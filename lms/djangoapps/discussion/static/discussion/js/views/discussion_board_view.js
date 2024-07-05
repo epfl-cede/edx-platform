@@ -54,6 +54,13 @@
                 }).render();
                 this.renderBreadcrumbs();
                 this.showBrowseMenu(true);
+
+                this.$el
+                    .data( 'user_is_staff', DiscussionUtil.isStaff() )
+                    .data( 'user_is_ta', DiscussionUtil.isTA() );
+
+                $(document).trigger( 'edxForumDisplayUpdated', [ 'DiscussionBoardView', 'render' ] );
+
                 return this;
             },
 
