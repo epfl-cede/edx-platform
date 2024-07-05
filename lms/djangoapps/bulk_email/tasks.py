@@ -10,7 +10,7 @@ import re
 import time
 from collections import Counter
 from datetime import datetime
-from smtplib import SMTPConnectError, SMTPDataError, SMTPException, SMTPServerDisconnected, SMTPSenderRefused
+from smtplib import SMTPConnectError, SMTPDataError, SMTPException, SMTPServerDisconnected, SMTPSenderRefused, SMTPRecipientsRefused
 from time import sleep
 
 from boto.exception import AWSConnectionError
@@ -73,6 +73,7 @@ SINGLE_EMAIL_FAILURE_ERRORS = (
     SESDomainEndsWithDotError,  # Recipient's email address' domain ends with a period/dot.
     SESIllegalAddressError,  # Raised when an illegal address is encountered.
     SESLocalAddressCharacterError,  # An address contained a control or whitespace character.
+    SMTPRecipientsRefused,  # One or more recipient addresses were refused, for example because of unknown domain.
 )
 
 # Exceptions that, if caught, should cause the task to be re-tried.

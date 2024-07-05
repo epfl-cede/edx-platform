@@ -2132,7 +2132,7 @@ class CourseEnrollment(models.Model):
     def refund_cutoff_date(self):
         """ Calculate and return the refund window end date. """
         # NOTE: This is here to avoid circular references
-        from openedx.core.djangoapps.commerce.utils import ECOMMERCE_DATE_FORMAT
+        from openedx.core.djangoapps.commerce.utils import ECOMMERCE_DATE_FORMAT, ECOMMERCE_DATE_FORMAT_2
         date_placed = self.get_order_attribute_value('date_placed')
 
         if not date_placed:
@@ -2156,21 +2156,30 @@ class CourseEnrollment(models.Model):
             )
             set_enrollment_attributes(username, str(self.course_id), enrollment_attributes)
 
-        refund_window_start_date = max(
-            datetime.strptime(date_placed, ECOMMERCE_DATE_FORMAT),
-            self.course_overview.start.replace(tzinfo=None)
-        )
+        try:
+            refund_window_start_date = max(
+                datetime.strptime(date_placed, ECOMMERCE_DATE_FORMAT),
+                self.course_overview.start.replace(tzinfo=None)
+            )
+        except ValueError:
+            refund_window_start_date = max(
+                datetime.strptime(date_placed, ECOMMERCE_DATE_FORMAT_2),
+                self.course_overview.start.replace(tzinfo=None)
+            )
 
         return refund_window_start_date.replace(tzinfo=UTC) + EnrollmentRefundConfiguration.current().refund_window
 
     def is_order_voucher_refundable(self):
         """ Checks if the coupon batch expiration date has passed to determine whether order voucher is refundable. """
-        from openedx.core.djangoapps.commerce.utils import ECOMMERCE_DATE_FORMAT
+        from openedx.core.djangoapps.commerce.utils import ECOMMERCE_DATE_FORMAT, ECOMMERCE_DATE_FORMAT_2
         vouchers = self.get_order_attribute_from_ecommerce('vouchers')
         if not vouchers:
             return False
         voucher_end_datetime_str = vouchers[0]['end_datetime']
-        voucher_expiration_date = datetime.strptime(voucher_end_datetime_str, ECOMMERCE_DATE_FORMAT).replace(tzinfo=UTC)
+        try:
+            voucher_expiration_date = datetime.strptime(voucher_end_datetime_str, ECOMMERCE_DATE_FORMAT).replace(tzinfo=UTC)
+        except ValueError:
+            voucher_expiration_date = datetime.strptime(voucher_end_datetime_str, ECOMMERCE_DATE_FORMAT_2).replace(tzinfo=UTC)
         return datetime.now(UTC) < voucher_expiration_date
 
     def get_order_attribute_from_ecommerce(self, attribute_name):

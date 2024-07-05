@@ -11,6 +11,7 @@ from openedx.core.djangoapps.oauth_dispatch.jwt import create_jwt_for_user
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 
 ECOMMERCE_DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+ECOMMERCE_DATE_FORMAT_2 = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 
 def create_tracking_context(user):

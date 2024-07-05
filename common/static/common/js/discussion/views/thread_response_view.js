@@ -90,11 +90,17 @@
                     this.hideCommentForm();
                 }
                 this.renderComments();
+
+                $(document).trigger( 'edxForumDisplayUpdated', [ 'ThreadResponseView', 'render' ] );
+
                 return this;
             };
 
             ThreadResponseView.prototype.afterInsert = function() {
                 this.makeWmdEditor('comment-body');
+
+                $(document).trigger( 'edxForumDisplayUpdated', [ 'ThreadResponseView', 'afterInsert' ] );
+
                 return this.hideEditorChrome();
             };
 
@@ -260,6 +266,7 @@
             ThreadResponseView.prototype.renderSubView = function(view) {
                 view.setElement(this.$('.discussion-response'));
                 view.render();
+
                 return view.delegateEvents();
             };
 
@@ -344,6 +351,9 @@
                         self.createShowView();
                         self.renderShowView();
                         DiscussionUtil.typesetMathJax(self.$el.find('.response-body'));
+
+                        $(document).trigger( 'edxForumDisplayUpdated', [ 'ThreadResponseView', 'update' ] );
+
                         return self.showCommentForm();
                     }
                 });

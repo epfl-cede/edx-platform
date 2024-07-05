@@ -13,6 +13,7 @@
         return function(
             fieldsData,
             disableOrderHistoryTab,
+            disableLinkedAccountsTab,
             ordersHistoryData,
             authData,
             passwordResetSupportUrl,
@@ -100,7 +101,7 @@
                 model: userAccountModel,
                 title: gettext('Full Name'),
                 valueAttribute: 'name',
-                helpMessage: gettext('The name that is used for ID verification and that appears on your certificates.'),  // eslint-disable-line max-len,
+                helpMessage: gettext('The name that is used for ID verification and that appears on your certificates.') + ' It will also be displayed in the discussion forum, provided you fill your year of birth below, and are over 18 years old.',  // eslint-disable-line max-len,
                 persistChanges: true
             };
             if (syncLearnerProfileData && enterpriseReadonlyAccountFields.fields.indexOf('name') !== -1) {
@@ -439,6 +440,7 @@
                 },
                 userPreferencesModel: userPreferencesModel,
                 disableOrderHistoryTab: disableOrderHistoryTab,
+                disableLinkedAccountsTab: disableLinkedAccountsTab,
                 betaLanguage: betaLanguage
             });
 
