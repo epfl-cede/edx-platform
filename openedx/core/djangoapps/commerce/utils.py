@@ -28,6 +28,7 @@ __version__ = '5.6.1'
 REQUEST_READ_TIMEOUT = 5
 
 ECOMMERCE_DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+ECOMMERCE_DATE_FORMAT_2 = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 
 class BearerAuth(AuthBase):

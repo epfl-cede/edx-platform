@@ -874,10 +874,12 @@ def user_details_force_sync(auth_entry, strategy, details, user=None, *args, **k
         # Track any fields that would raise an integrity error if there was a conflict.
         integrity_conflict_fields = {'email': user.email, 'username': user.username}
 
+        really_protected_fields = settings.THIRD_PARTY_AUTH_REALLY_PROTECTED_FIELDS if hasattr(settings, 'THIRD_PARTY_AUTH_REALLY_PROTECTED_FIELDS') else []
+
         for provider_field, (model, field) in field_mapping.items():
             provider_value = details.get(provider_field)
             current_value = getattr(model, field)
-            if provider_value is not None and current_value != provider_value:
+            if provider_value is not None and field not in really_protected_fields and current_value != provider_value:
                 if field in integrity_conflict_fields and User.objects.filter(**{field: provider_value}).exists():
                     logger.warning('[THIRD_PARTY_AUTH] Profile data synchronization conflict. '
                                    'UserId: {user_id}, Provider: {provider}, ConflictField: {conflict_field}, '

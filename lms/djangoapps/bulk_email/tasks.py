@@ -10,7 +10,7 @@ import re
 import time
 from collections import Counter
 from datetime import datetime
-from smtplib import SMTPConnectError, SMTPDataError, SMTPException, SMTPSenderRefused, SMTPServerDisconnected
+from smtplib import SMTPConnectError, SMTPDataError, SMTPException, SMTPSenderRefused, SMTPServerDisconnected, SMTPRecipientsRefused
 from time import sleep
 
 from botocore.exceptions import ClientError, EndpointConnectionError
@@ -56,7 +56,8 @@ log = logging.getLogger('edx.celery.task')
 # Errors that an individual email is failing to be sent, and should just
 # be treated as a fail.
 SINGLE_EMAIL_FAILURE_ERRORS = (
-    ClientError
+    ClientError,
+    SMTPRecipientsRefused,  # One or more recipient addresses were refused, for example because of unknown domain.
 )
 
 # Exceptions that, if caught, should cause the task to be re-tried.
