@@ -159,6 +159,7 @@ def account_settings_context(request):
         'show_dashboard_tabs': True,
         'order_history': user_orders,
         'disable_order_history_tab': should_redirect_to_order_history_microfrontend(),
+        'disable_linked_accounts_tab': settings.FEATURES.get('DISABLE_LINKED_ACCOUNTS_TAB', False),
         'enable_account_deletion': configuration_helpers.get_value(
             'ENABLE_ACCOUNT_DELETION', settings.FEATURES.get('ENABLE_ACCOUNT_DELETION', False)
         ),

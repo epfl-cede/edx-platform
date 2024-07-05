@@ -53,6 +53,9 @@
 
             ResponseCommentView.prototype.render = function() {
                 this.renderShowView();
+
+                $(document).trigger( 'edxForumDisplayUpdated', [ 'ResponseCommentView', 'render' ] );
+
                 return this;
             };
 

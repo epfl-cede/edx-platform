@@ -77,7 +77,10 @@ def apply_settings(django_settings):
     django_settings.SOCIAL_AUTH_STRATEGY = 'common.djangoapps.third_party_auth.strategy.ConfigurationModelStrategy'
 
     # We let the user specify their email address during signup.
-    django_settings.SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']
+    # We don’t update the first name as it is limited to 30 characters in the database,
+    # which is WAY, WAY TOO SHORT, and it’s not used anyway, the full name (varchar(255))
+    # in auth_user_profile is used instead, and build at login time
+    django_settings.SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['first_name', 'email']
 
     # Disable exceptions by default for prod so you get redirect behavior
     # instead of a Django error page. During development you may want to
