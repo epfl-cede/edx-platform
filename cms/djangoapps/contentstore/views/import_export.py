@@ -10,6 +10,7 @@ import logging
 import os
 import re
 import shutil
+import time
 from wsgiref.util import FileWrapper
 
 from django.conf import settings
@@ -153,6 +154,15 @@ def _write_chunk(request, courselike_key):  # lint-amnesty, pylint: disable=too-
             return error_response(error_message, 415, 0)
 
         temp_filepath = course_dir / filename
+        # It seems file writes take some (albeit very short) time to propagate to other swarm
+        # nodes via NFS. Thus, we create a lock file before writing the chunk, and remove once
+        # done, so that the request with the next chunk doesn’t start before the swarm nodes
+        # has received all of the last request’s writes. Otherwise, upload fails at
+        # `if size < int(content_range['start'])` below.
+        # Don’t try to move the lock to Redis or the session instead of a file, it would defeat
+        # the purpose, which is that the lock file removal has to propagate via NFS the same was
+        # as the chunk being written.
+        lock_filepath = temp_filepath + ".lock"
         if not course_dir.isdir():
             os.mkdir(course_dir)
 
@@ -174,6 +184,13 @@ def _write_chunk(request, courselike_key):  # lint-amnesty, pylint: disable=too-
             set_custom_attribute('course_import_init', True)
         else:
             mode = "ab+"
+            # Wait for the lock file removal by the previous request to be propagated.
+            # Time out after 10 seconds, but in practice it seems to solve the issue
+            # without ever entering the loop, which probably means that the NFS propagation
+            # time is very short, and that lock file creation and checking is enough.
+            timeout = time.time() + 10
+            while lock_filepath.exists() and time.time() < timeout:
+                time.sleep( 0.2 )
             # Appending to fail would fail if the file doesn't exist.
             if not temp_filepath.exists():
                 error_message = _('Some chunks missed during file upload. Please try again')
@@ -198,11 +215,14 @@ def _write_chunk(request, courselike_key):  # lint-amnesty, pylint: disable=too-
             elif size > int(content_range['stop']) and size == int(content_range['end']):
                 return JsonResponse({'ImportStatus': 1})
 
-        with open(temp_filepath, mode) as temp_file:
+        # Create the lock file in addition to the temp file for upload.
+        with open(temp_filepath, mode) as temp_file, open(lock_filepath, "wb") as lock_file:
             for chunk in request.FILES['course-data'].chunks():
                 temp_file.write(chunk)
 
         size = os.path.getsize(temp_filepath)
+        # Remove the lock file once the chunk is done being written.
+        os.remove(lock_filepath)
 
         if int(content_range['stop']) != int(content_range['end']) - 1:
             # More chunks coming
