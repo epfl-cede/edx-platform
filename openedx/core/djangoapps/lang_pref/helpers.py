@@ -4,6 +4,7 @@ Language preference cookie helper functions
 from django.conf import settings
 
 from openedx.core.djangoapps.lang_pref import COOKIE_DURATION
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 
 
 def get_language_cookie(request, default=None):
@@ -20,7 +21,7 @@ def set_language_cookie(request, response, value):
     response.set_cookie(
         settings.LANGUAGE_COOKIE_NAME,
         value=value,
-        domain=settings.SHARED_COOKIE_DOMAIN,
+        domain=configuration_helpers.get_value("SHARED_COOKIE_DOMAIN", settings.SHARED_COOKIE_DOMAIN),
         max_age=COOKIE_DURATION,
         secure=request.is_secure(),
         samesite="None" if request.is_secure() else "Lax",
@@ -32,5 +33,6 @@ def unset_language_cookie(response):
     Remove the language cookie from the response object.
     """
     response.delete_cookie(
-        settings.LANGUAGE_COOKIE_NAME, domain=settings.SHARED_COOKIE_DOMAIN
+        settings.LANGUAGE_COOKIE_NAME,
+        domain=configuration_helpers.get_value("SHARED_COOKIE_DOMAIN", settings.SHARED_COOKIE_DOMAIN),
     )
