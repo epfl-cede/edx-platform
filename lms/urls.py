@@ -920,10 +920,11 @@ urlpatterns += [
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     # profile image urls must come before the media url to work
-    urlpatterns += static(
-        settings.PROFILE_IMAGE_BACKEND['options']['base_url'],
-        document_root=settings.PROFILE_IMAGE_BACKEND['options']['location']
-    )
+    if settings.PROFILE_IMAGE_BACKEND['class'] != 'storages.backends.s3boto3.S3Boto3Storage':
+        urlpatterns += static(
+            settings.PROFILE_IMAGE_BACKEND['options']['base_url'],
+            document_root=settings.PROFILE_IMAGE_BACKEND['options']['location']
+        )
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # UX reference templates
