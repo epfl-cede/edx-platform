@@ -2354,6 +2354,8 @@ PIPELINE = {
     'DISABLE_WRAPPER': True,
     # Specify the UglifyJS binary to use
     'UGLIFYJS_BINARY': 'node_modules/.bin/uglifyjs',
+    # Fix UglifyJS 3.19.3 bug that corrupts underscore.js template function string concatenation
+    'UGLIFYJS_ARGUMENTS': '--compress sequences=false',
 }
 
 STATICFILES_STORAGE = 'openedx.core.storage.ProductionStorage'
