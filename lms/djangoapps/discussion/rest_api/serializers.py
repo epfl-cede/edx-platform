@@ -181,6 +181,7 @@ class _ContentSerializer(serializers.Serializer):
     """
     id = serializers.CharField(read_only=True)  # pylint: disable=invalid-name
     author = serializers.SerializerMethodField()
+    author_name = serializers.SerializerMethodField()
     author_label = serializers.SerializerMethodField()
     created_at = serializers.CharField(read_only=True)
     updated_at = serializers.CharField(read_only=True)
@@ -237,6 +238,18 @@ class _ContentSerializer(serializers.Serializer):
         Returns the author's username, or None if the content is anonymous.
         """
         return None if self._is_anonymous(obj) else obj["username"]
+
+    def get_author_name(self, obj):
+        """
+        Returns the author's full name from their profile, or None if the content is anonymous.
+        """
+        if self._is_anonymous(obj):
+            return None
+        try:
+            user = User.objects.select_related('profile').get(id=obj["user_id"])
+            return user.profile.name if hasattr(user, 'profile') and user.profile.name else None
+        except ObjectDoesNotExist:
+            return None
 
     def _get_user_label(self, user_id):
         """
