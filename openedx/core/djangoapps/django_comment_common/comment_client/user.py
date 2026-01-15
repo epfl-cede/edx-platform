@@ -177,7 +177,10 @@ class User(models.Model):
 
     def retire(self, retired_username):
         course_key = utils.get_course_key(self.attributes.get("course_id"))
-        forum_api.retire_user(user_id=self.id, retired_username=retired_username, course_id=str(course_key))
+        try:
+            forum_api.retire_user(user_id=self.id, retired_username=retired_username, course_id=str(course_key))
+        except ForumV2RequestError:
+            pass  # User not in forum, nothing to retire
 
     def replace_username(self, new_username):
         course_key = utils.get_course_key(self.attributes.get("course_id"))
