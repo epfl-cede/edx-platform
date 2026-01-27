@@ -1,0 +1,32 @@
+<%page expression_filter="h"/>
+<%!
+from openedx.core.djangolib.js_utils import js_escaped_string
+%>
+<%namespace name='static' file='static_content.html'/>
+
+<% ga_acct = static.get_value("GOOGLE_ANALYTICS_ACCOUNT", settings.GOOGLE_ANALYTICS_ACCOUNT) %>
+% if ga_acct:
+    <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', '${ga_acct | n, js_escaped_string}']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+    </script>
+% endif
+
+<% ga_4_id = static.get_value("GOOGLE_ANALYTICS_4_ID", settings.GOOGLE_ANALYTICS_4_ID) %>
+% if ga_4_id:
+  <script async src="https://www.googletagmanager.com/gtag/js?id=${ga_4_id}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', '${ga_4_id | n, js_escaped_string}');
+  </script>
+% endif

@@ -160,6 +160,8 @@
                     });
                 }
                 this.loadInitialResponses();
+
+                $(document).trigger( 'edxForumDisplayUpdated', [ 'DiscussionThreadView', 'render' ] );
             };
 
             DiscussionThreadView.prototype.attrRenderer = $.extend({}, DiscussionContentView.prototype.attrRenderer, {

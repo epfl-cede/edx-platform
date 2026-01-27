@@ -1,0 +1,29 @@
+<%page expression_filter="h"/>
+<%!
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+from openedx.core.djangolib.js_utils import js_escaped_string
+%>
+<%namespace name='static' file='static_content.html'/>
+
+<% matomo_domain = configuration_helpers.get_value('MATOMO_DOMAIN', getattr(settings, 'MATOMO_DOMAIN', None)) %>
+<% matomo_site_id = configuration_helpers.get_value('MATOMO_SITE_ID', getattr(settings, 'MATOMO_SITE_ID', None)) %>
+<% matomo_cookie_domain = configuration_helpers.get_value('MATOMO_COOKIE_DOMAIN', getattr(settings, 'MATOMO_COOKIE_DOMAIN', None)) %>
+
+% if matomo_domain and matomo_site_id:
+<script type="text/javascript">
+  var _paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  % if matomo_cookie_domain:
+  _paq.push(["setCookieDomain", "${matomo_cookie_domain | n, js_escaped_string}"]);
+  % endif
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//${matomo_domain | n, js_escaped_string}/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '${matomo_site_id | n, js_escaped_string}']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+% endif
