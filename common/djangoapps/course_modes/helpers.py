@@ -165,6 +165,16 @@ def get_verified_track_links(language):
                 'verified_certificate': track_verified_url,
                 'learn_more': track_comparison_url,
             }
+
+    # EPFL: if this instance has a swissmooc-catalog "premium certificate" page configured,
+    # point to it instead of falling back to the (often unset) MKTG_URLS['ROOT'].
+    catalog_premium_certificate_url = getattr(settings, 'CATALOG_PREMIUM_CERTIFICATE_URL', None)
+    if catalog_premium_certificate_url:
+        return {
+            'verified_certificate': catalog_premium_certificate_url,
+            'learn_more': support_root_url,
+        }
+
     # Default URL's are used if not edx.org
     return {
         'verified_certificate': marketing_root_url,

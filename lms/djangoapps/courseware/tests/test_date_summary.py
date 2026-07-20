@@ -655,9 +655,9 @@ class TestScheduleOverrides(SharedModuleStoreTestCase):
 
     def _check_text(self, upgrade_date_summary):
         """ Validates the text on an upgrade_date_summary """
-        assert upgrade_date_summary.title == 'Upgrade to Verified Certificate'
+        assert upgrade_date_summary.title == 'Upgrade to Premium Certificate'
         assert upgrade_date_summary.description ==\
-               "Don't miss the opportunity to highlight your new knowledge and skills by earning a verified" \
+               "Don't miss the opportunity to highlight your new knowledge and skills by earning a premium" \
                " certificate."
         assert upgrade_date_summary.relative_datestring == 'by {date}'
 
