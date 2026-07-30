@@ -25,6 +25,7 @@
                 'click .js-login': 'submitForm',
                 'click .forgot-password': 'forgotPassword',
                 'click .login-provider': 'thirdPartyAuth',
+                'click .login-provider-sms': 'thirdPartyAuth',
                 'click .enterprise-login': 'enterpriseSlugLogin',
                 'click .login-help': 'toggleLoginHelp'
             },
