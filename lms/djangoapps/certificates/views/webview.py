@@ -304,8 +304,12 @@ def _update_social_context(request, context, course, user_certificate, platform_
     # can add the certificate information to their profile.
     linkedin_config = LinkedInAddToProfileConfiguration.current()
     if linkedin_config.is_enabled():
+        # If the certificate configuration sets a course title overwrite, use it verbatim as the
+        # certification name on LinkedIn; otherwise add_to_profile_url falls back to the default
+        # "{platform_name} {mode} Certificate for {course_name}" naming.
         context['linked_in_url'] = linkedin_config.add_to_profile_url(
-            course, user_certificate.mode, smart_str(share_url), certificate=user_certificate
+            course, user_certificate.mode, smart_str(share_url), certificate=user_certificate,
+            cert_name=context['certificate_data'].get('course_title') or None,
         )
 
 

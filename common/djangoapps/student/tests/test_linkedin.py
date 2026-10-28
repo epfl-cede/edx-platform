@@ -70,6 +70,33 @@ class LinkedInAddToProfileUrlTests(TestCase):
 
         self.assertEqual(actual_url, expected_url)
 
+    def test_linked_in_url_with_exact_cert_name(self):
+        """
+        Test: an explicit cert_name is used verbatim, without the
+        "{platform_name} {mode} Certificate for {course_name}" formatting.
+        """
+        config = LinkedInAddToProfileConfigurationFactory()
+
+        expected_url = (
+            'https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&'
+            'name={cert_name}&certUrl={cert_url}&'
+            'organizationId={company_identifier}'
+        ).format(
+            cert_name=quote('Course Title Overwrite'.encode('utf-8')),
+            cert_url=quote(self.CERT_URL, safe=''),
+            company_identifier=config.company_identifier,
+        )
+
+        course_mock_object = SimpleNamespace(
+            display_name=self.COURSE_NAME, display_organization=self.COURSE_ORGANIZATION
+        )
+
+        actual_url = config.add_to_profile_url(
+            course_mock_object, 'honor', self.CERT_URL, cert_name='Course Title Overwrite'
+        )
+
+        self.assertEqual(actual_url, expected_url)
+
     @ddt.data(
         ('honor', 'Honor+Code+Credential+for+Test+Course+%E2%98%83'),
         ('verified', 'Verified+Credential+for+Test+Course+%E2%98%83'),
