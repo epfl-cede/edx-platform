@@ -1398,7 +1398,7 @@ class LinkedInAddToProfileConfiguration(ConfigurationModel):
         enabled = super().is_enabled(*key_fields)
         return self.share_settings.get('CERTIFICATE_LINKEDIN', enabled)
 
-    def add_to_profile_url(self, course, cert_mode, cert_url, certificate=None):
+    def add_to_profile_url(self, course, cert_mode, cert_url, certificate=None, course_name=None):
 
         """
         Construct the URL for the "add to profile" button. This will autofill the form based on
@@ -1412,9 +1412,12 @@ class LinkedInAddToProfileConfiguration(ConfigurationModel):
         Keyword Arguments:
             certificate (GeneratedCertificate): a GeneratedCertificate object for the user and course.
                 If provided, this function will also autofill the certId and issue date for the cert.
+            course_name (str): Name to use for the certification in the LinkedIn dialog. Callers may pass
+                the certificate title shown on the certificate (which may differ from the course display
+                name). Defaults to the course display name.
         """
         params = {
-            'name': self._cert_name(course.display_name, cert_mode),
+            'name': self._cert_name(course_name or course.display_name, cert_mode),
             'certUrl': cert_url,
         }
 
