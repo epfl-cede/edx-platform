@@ -183,9 +183,7 @@ class CourseApiTestViews(BaseCoursewareTests, MasqueradeMixin):
                 request = RequestFactory().request()
                 cert_url = get_certificate_url(course_id=self.course.id, uuid=cert.verify_uuid)
                 linkedin_url_params = {
-                    'name': '{platform_name} Verified Certificate for {course_name}'.format(
-                        platform_name=settings.PLATFORM_NAME, course_name=self.course.display_name,
-                    ),
+                    'name': self.course.display_name,
                     'certUrl': request.build_absolute_uri(cert_url),
                     # default value from the LinkedInAddToProfileConfigurationFactory company_identifier
                     'organizationId': 1337,

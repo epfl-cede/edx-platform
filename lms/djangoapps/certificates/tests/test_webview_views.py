@@ -299,9 +299,7 @@ class CertificatesViewsTests(CommonCertificatesTestCase, CacheIsolationTestCase)
         response = self.client.get(test_url)
         assert response.status_code == 200
         params = {
-            'name': '{platform_name} Honor Code Certificate for {course_name}'.format(
-                platform_name=settings.PLATFORM_NAME, course_name=self.course.display_name,
-            ).encode('utf-8'),
+            'name': 'course_title_0'.encode('utf-8'),
             'certUrl': self.request.build_absolute_uri(test_url),
             # default value from the LinkedInAddToProfileConfigurationFactory company_identifier
             'organizationId': 1337,
@@ -330,9 +328,7 @@ class CertificatesViewsTests(CommonCertificatesTestCase, CacheIsolationTestCase)
         assert response.status_code == 200
         # the linkedIn share URL with appropriate parameters should be present
         params = {
-            'name': 'My Platform Site Honor Code Certificate for {course_name}'.format(
-                course_name=self.course.display_name,
-            ).encode('utf-8'),
+            'name': 'course_title_0'.encode('utf-8'),
             'certUrl': 'http://test.localhost' + test_url,
             'organizationId': 2448,
             'certId': self.cert.verify_uuid,

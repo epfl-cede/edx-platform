@@ -3,7 +3,6 @@
 from types import SimpleNamespace
 from urllib.parse import quote
 import ddt
-from django.conf import settings
 from django.test import TestCase
 
 from lms.djangoapps.certificates.tests.factories import LinkedInAddToProfileConfigurationFactory
@@ -40,10 +39,10 @@ class LinkedInAddToProfileUrlTests(TestCase):
     }
 
     @ddt.data(
-        ('honor', 'Honor+Code+Certificate+for+Test+Course+%E2%98%83'),
-        ('verified', 'Verified+Certificate+for+Test+Course+%E2%98%83'),
-        ('professional', 'Professional+Certificate+for+Test+Course+%E2%98%83'),
-        ('default_mode', 'Certificate+for+Test+Course+%E2%98%83')
+        ('honor', 'Test+Course+%E2%98%83'),
+        ('verified', 'Test+Course+%E2%98%83'),
+        ('professional', 'Test+Course+%E2%98%83'),
+        ('default_mode', 'Test+Course+%E2%98%83')
     )
     @ddt.unpack
     def test_linked_in_url(self, cert_mode, expected_cert_name):
@@ -51,10 +50,9 @@ class LinkedInAddToProfileUrlTests(TestCase):
 
         expected_url = (
             'https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&'
-            'name={platform}+{cert_name}&certUrl={cert_url}&'
+            'name={cert_name}&certUrl={cert_url}&'
             'organizationId={company_identifier}'
         ).format(
-            platform=quote(settings.PLATFORM_NAME.encode('utf-8')),
             cert_name=expected_cert_name,
             cert_url=quote(self.CERT_URL, safe=''),
             company_identifier=config.company_identifier,
@@ -71,11 +69,11 @@ class LinkedInAddToProfileUrlTests(TestCase):
         self.assertEqual(actual_url, expected_url)
 
     @ddt.data(
-        ('honor', 'Honor+Code+Credential+for+Test+Course+%E2%98%83'),
-        ('verified', 'Verified+Credential+for+Test+Course+%E2%98%83'),
-        ('professional', 'Professional+Credential+for+Test+Course+%E2%98%83'),
-        ('no-id-professional', 'Professional+Credential+for+Test+Course+%E2%98%83'),
-        ('default_mode', 'Certificate+for+Test+Course+%E2%98%83')
+        ('honor', 'Test+Course+%E2%98%83'),
+        ('verified', 'Test+Course+%E2%98%83'),
+        ('professional', 'Test+Course+%E2%98%83'),
+        ('no-id-professional', 'Test+Course+%E2%98%83'),
+        ('default_mode', 'Test+Course+%E2%98%83')
     )
     @ddt.unpack
     def test_linked_in_url_with_cert_name_override(self, cert_mode, expected_cert_name):
@@ -83,10 +81,9 @@ class LinkedInAddToProfileUrlTests(TestCase):
 
         expected_url = (
             'https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&'
-            'name={platform}+{cert_name}&certUrl={cert_url}&'
+            'name={cert_name}&certUrl={cert_url}&'
             'organizationId={company_identifier}'
         ).format(
-            platform=quote(settings.PLATFORM_NAME.encode('utf-8')),
             cert_name=expected_cert_name,
             cert_url=quote(self.CERT_URL, safe=''),
             company_identifier=config.company_identifier,
@@ -102,11 +99,11 @@ class LinkedInAddToProfileUrlTests(TestCase):
         self.assertEqual(actual_url, expected_url)
 
     @ddt.data(
-        ('honor', 'Honor+Code+Credential+for+Test+Course+%E2%98%83'),
-        ('verified', 'Verified+Credential+for+Test+Course+%E2%98%83'),
-        ('professional', 'Professional+Credential+for+Test+Course+%E2%98%83'),
-        ('no-id-professional', 'Professional+Credential+for+Test+Course+%E2%98%83'),
-        ('default_mode', 'Certificate+for+Test+Course+%E2%98%83')
+        ('honor', 'Test+Course+%E2%98%83'),
+        ('verified', 'Test+Course+%E2%98%83'),
+        ('professional', 'Test+Course+%E2%98%83'),
+        ('no-id-professional', 'Test+Course+%E2%98%83'),
+        ('default_mode', 'Test+Course+%E2%98%83')
     )
     @ddt.unpack
     def test_linked_in_url_with_course_org_name_override(
@@ -116,10 +113,9 @@ class LinkedInAddToProfileUrlTests(TestCase):
 
         expected_url = (
             'https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&'
-            'name={platform}+{cert_name}&certUrl={cert_url}&'
+            'name={cert_name}&certUrl={cert_url}&'
             'organizationName={course_organization_name}'
         ).format(
-            platform=quote(settings.PLATFORM_NAME.encode('utf-8')),
             cert_name=expected_cert_name,
             cert_url=quote(self.CERT_URL, safe=''),
             course_organization_name=quote(self.COURSE_ORGANIZATION.encode('utf-8')),
