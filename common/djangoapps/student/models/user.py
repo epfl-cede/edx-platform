@@ -1475,7 +1475,12 @@ class LinkedInAddToProfileConfiguration(ConfigurationModel):
             'CERTIFICATE_LINKEDIN_DEFAULTS_TO_COURSE_ORGANIZATION_NAME', False
         )
         if (prefer_course_organization_name and course):
-            return {"organizationName": course.display_organization}
+            # display_organization only exists on the modulestore course block,
+            # not on CourseOverview (e.g. the courseware meta API passes a
+            # CourseOverview here); fall back to the platform-level name.
+            course_organization_name = getattr(course, 'display_organization', None)
+            if course_organization_name:
+                return {"organizationName": course_organization_name}
 
         org_id = configuration_helpers.get_value(
             "LINKEDIN_COMPANY_ID", self.company_identifier

@@ -133,3 +133,40 @@ class LinkedInAddToProfileUrlTests(TestCase):
             )
 
         self.assertEqual(actual_url, expected_url)
+
+    @ddt.data(
+        'honor',
+        'verified',
+    )
+    def test_linked_in_url_course_org_name_fallback_when_missing(
+        self, cert_mode
+    ):
+        """A CourseOverview-like object (no display_organization attribute) must
+        not raise: add_to_profile_url falls back to the platform-level
+        organization info. Regression test: the courseware meta API passes a
+        CourseOverview here, and a missing display_organization raised an
+        AttributeError that CoursewareMeta.__getattr__ masked into a confusing
+        "'CourseOverview' object has no attribute 'linkedin_add_to_profile_url'"."""
+        config = LinkedInAddToProfileConfigurationFactory()
+
+        expected_url = (
+            'https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&'
+            'name={cert_name}&certUrl={cert_url}&'
+            'organizationId={company_identifier}'
+        ).format(
+            cert_name=quote(self.COURSE_NAME.encode('utf-8')),
+            cert_url=quote(self.CERT_URL, safe=''),
+            company_identifier=config.company_identifier,
+        )
+
+        with with_site_configuration_context(
+            configuration=self.SITE_CONFIGURATION_COURSE_LEVEL_ORG
+        ):
+            course_mock_object = SimpleNamespace(  # like CourseOverview
+                display_name=self.COURSE_NAME,
+            )
+            actual_url = config.add_to_profile_url(
+                course_mock_object, cert_mode, self.CERT_URL
+            )
+
+        self.assertEqual(actual_url, expected_url)
